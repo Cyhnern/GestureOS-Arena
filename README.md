@@ -57,12 +57,6 @@ gestureos-arena/
 
 Modüller ES `import`/`export` ile birbirine bağlıdır (`<script type="module">`), bu yüzden dosyayı doğrudan `file://` ile açmak bazı tarayıcılarda CORS kısıtlaması nedeniyle çalışmayabilir. En güvenilir yöntem basit bir yerel sunucu üzerinden açmaktır:
 
-```bash
-# Proje klasöründeyken
-python -m http.server 8000
-# Tarayıcıda: http://localhost:8000
-```
-
 ## Bağımlılıklar
 
 - [`@mediapipe/hands`](https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js) — CDN üzerinden yüklenir, internet bağlantısı gerektirir.
