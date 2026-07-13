@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestureOS Arena — El Hareketiyle Oyna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <a class="brand" href="../gestureos-okul-raporu.html">
+      <span class="mark"></span> GestureOS Arena
+    </a>
+    <div class="hud">
+      <div class="pill">SEVİYE <b id="hud-level">1</b>/4</div>
+      <div class="pill">PUAN <b id="hud-score">0</b></div>
+      <button class="gear" id="gearBtn" aria-label="Ayarlar">⚙</button>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">İmleç Kontrolü — 0 / 10</div>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <label>Pinch (tıklama) hassasiyeti: <span id="sensVal">Orta</span></label>
+    <input type="range" min="1" max="3" value="2" id="sensSlider">
+    <label>İmleç yumuşatma: <span id="smoothVal">Orta</span></label>
+    <input type="range" min="1" max="3" value="2" id="smoothSlider">
+  </div>
+
+  <canvas id="game"></canvas>
+  <div class="miss-hint" id="missHint">✋ Elini kameraya göster</div>
+
+  <div class="cam-box">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas class="skel" id="skel"></canvas>
+    <div class="cam-tag">CANLI</div>
+  </div>
+
+  <div class="gesture-status">
+    <div class="g-row"><span><span class="g-dot" id="dotHand"></span>El görülüyor</span></div>
+    <div class="g-row"><span><span class="g-dot" id="dotLeft"></span>Sol tık (başparmak+işaret)</span></div>
+    <div class="g-row"><span><span class="g-dot" id="dotRight"></span>Sağ tık (başparmak+orta)</span></div>
+    <div class="g-row"><span><span class="g-dot" id="dotFist"></span>Yumruk (sürükle)</span></div>
+    <div class="g-row"><span><span class="g-dot" id="dotLock"></span>Kilit (işaret+serçe, 700ms)</span></div>
+  </div>
+
+  <!-- START / PERMISSION OVERLAY -->
+  <div class="overlay" id="ov-start">
+    <div class="card">
+      <div class="eyebrow">GestureOS Arena · Kamera ile Oyna</div>
+      <h1>Elinle bilgisayarı kontrol etmeye hazır mısın?</h1>
+      <p>Kameranı aç, <b>sağ elini</b> göster. 4 seviyede sırayla imleç kontrolü, sol tık, sağ tık ve yumrukla sürüklemeyi öğreneceksin. Ayrıca işaret+serçe parmağını 700ms birleştirirsen imleç kilitlenir/açılır — elini rahatça yeniden konumlandırmak için kullanışlı.</p>
+      <button class="btn" id="permBtn">Kameraya İzin Ver</button>
+      <div class="privacy">Görüntün hiçbir yere kaydedilmez veya gönderilmez — sadece tarayıcında, anlık olarak işlenir.</div>
+
+      <div id="camPicker" class="cam-picker">
+        <label>Hangi kamera kullanılsın?</label>
+        <select id="camSelect"></select>
+        <button class="btn" id="startBtn">Oyunu Başlat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL INTRO OVERLAY -->
+  <div class="overlay hidden" id="ov-level">
+    <div class="card">
+      <div class="eyebrow" id="lv-eyebrow">SEVİYE 1</div>
+      <div class="gesture-icon" id="lv-icon">✋</div>
+      <h2 id="lv-title">İmleç Kontrolü</h2>
+      <p id="lv-desc">Elini hareket ettirerek imleci hedeflerin üzerine götür.</p>
+      <div class="legend-row" id="lv-legend"></div>
+      <button class="btn" id="lv-continue">Hazırım</button>
+    </div>
+  </div>
+
+  <!-- END OVERLAY -->
+  <div class="overlay hidden" id="ov-end">
+    <div class="card">
+      <div class="eyebrow">TAMAMLANDI</div>
+      <h1 id="end-title">Tebrikler!</h1>
+      <p id="end-desc">GestureOS'un tüm temel komutlarını el hareketleriyle tamamladın.</p>
+      <div class="pill" style="display:inline-flex; margin-bottom:20px;">TOPLAM PUAN <b id="end-score" style="margin-left:8px;">0</b></div>
+      <div>
+        <button class="btn" id="restartBtn">Tekrar Oyna</button>
+        <a class="btn secondary" href="../gestureos-okul-raporu.html">Rapora Dön</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR OVERLAY -->
+  <div class="overlay hidden" id="ov-error">
+    <div class="card">
+      <div class="eyebrow">KAMERA ERİŞİMİ GEREKLİ</div>
+      <h2>Kameraya erişemedim</h2>
+      <p id="err-msg">Oyunun çalışması için tarayıcı kamera iznine ihtiyaç var. Adres çubuğundaki kamera simgesinden izni kontrol edip sayfayı yenile.</p>
+      <button class="btn" onclick="location.reload()">Tekrar Dene</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- MediaPipe Hands (global window.Hands olarak yüklenir) -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<!-- Uygulama giriş noktası (ES modülleri) -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
