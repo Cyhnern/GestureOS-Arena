@@ -57,11 +57,7 @@ gestureos-arena/
 
 Modüller ES `import`/`export` ile birbirine bağlıdır (`<script type="module">`), bu yüzden dosyayı doğrudan `file://` ile açmak bazı tarayıcılarda CORS kısıtlaması nedeniyle çalışmayabilir. En güvenilir yöntem basit bir yerel sunucu üzerinden açmaktır:
 
-```bash
-# Proje klasöründeyken
-python -m http.server 8000
-# Tarayıcıda: http://localhost:8000
-```
+Siteye burdan ulaşım sağlayabilirsiniz:https://gesture-os-arena.vercel.app
 
 ## Bağımlılıklar
 
