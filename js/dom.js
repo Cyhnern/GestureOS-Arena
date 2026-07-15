@@ -53,8 +53,17 @@ export const lvDesc = document.getElementById('lv-desc');
 export const lvLegend = document.getElementById('lv-legend');
 export const lvContinueBtn = document.getElementById('lv-continue');
 
-// Bitiş ekranı
+// Bitiş ekranı ("Mission Complete")
 export const endScore = document.getElementById('end-score');
+export const endBadge = document.getElementById('endBadge');
+export const endGrade = document.getElementById('endGrade');
+export const endAccuracy = document.getElementById('endAccuracy');
+export const endTracking = document.getElementById('endTracking');
+export const endReaction = document.getElementById('endReaction');
+export const endTime = document.getElementById('endTime');
+export const endBestGesture = document.getElementById('endBestGesture');
+export const endWeakGesture = document.getElementById('endWeakGesture');
+export const pdfBtn = document.getElementById('pdfBtn');
 export const restartBtn = document.getElementById('restartBtn');
 
 // Hata ekranı

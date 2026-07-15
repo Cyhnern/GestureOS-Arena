@@ -2,17 +2,25 @@
  * game.js
  * Seviye akışı, hedef üretimi/skorlama, sürükleme görevi ve her karede
  * çalışan render döngüsü. `state.js`'teki paylaşılan durumu okuyup günceller.
+ * Ayrıca her hedef/görev olayını `stats.js`'e bildirir ve oyun bittiğinde
+ * "Mission Complete" ekranını oturum özetiyle doldurur.
  */
 
-import { LEVELS } from './config.js';
+import { LEVELS, RANK_MEDALS } from './config.js';
 import { state, settings } from './state.js';
 import {
   game, gctx, missHint,
   hudLevel, hudScore, progressFill, progressLabel,
   lvEyebrow, lvIcon, lvTitle, lvDesc, lvLegend,
-  endScore, ovStart, ovLevel, ovEnd, ovError,
+  endScore, endBadge, endGrade, endAccuracy, endTracking, endReaction, endTime,
+  endBestGesture, endWeakGesture,
+  ovStart, ovLevel, ovEnd, ovError,
   skelCanvas,
 } from './dom.js';
+import {
+  resetSessionStats, beginLevelStat, recordSpawn, recordPop, recordFrame,
+  computeSessionSummary, saveSessionToStorage,
+} from './stats.js';
 
 export const COLORS = { hover: '#1FB6C9', left: '#1FB6C9', right: '#B4E23C', drag: '#F5B942' };
 
@@ -44,7 +52,9 @@ function spawnTarget() {
     x: rand(r + 40, game.width - r - 40),
     y: rand(r + 120, game.height - r - 140),
     r, popping: 0,
+    born: performance.now(),
   });
+  recordSpawn(type);
 }
 
 function spawnDragTask() {
@@ -59,7 +69,9 @@ function spawnDragTask() {
   state.dragTask = {
     ox: startX, oy: startY, x: startX, y: startY, r,
     zoneX, zoneY, zoneR: 60, grabbed: false, done: false,
+    spawnTime: performance.now(),
   };
+  recordSpawn('drag');
 }
 
 /* ------------------------------ Seviye akışı ---------------------------- */
@@ -69,6 +81,7 @@ export function resetGame() {
   state.targets = []; state.dragTask = null; state.dragsCompleted = 0;
   state.locked = false; state.lockPinchActive = false; state.lockArmed = true;
   hudScore.textContent = 0;
+  resetSessionStats();
 }
 
 export function startLevel(i) {
@@ -81,6 +94,8 @@ export function startLevel(i) {
   state.levelStartTime = performance.now();
 
   const lvl = LEVELS[i];
+  beginLevelStat(lvl);
+
   hudLevel.textContent = lvl.id;
   lvEyebrow.textContent = lvl.eyebrow;
   lvIcon.textContent = lvl.icon;
@@ -125,9 +140,42 @@ export function checkLevelComplete() {
   }
 }
 
+let lastSummary = null;
+
+/** PDF butonu (ui.js) ve rapor bağlantısı için son hesaplanan oturum özetini döner. */
+export function getLastSummary() {
+  return lastSummary;
+}
+
+function fmtDuration(ms) {
+  const s = Math.round(ms / 1000);
+  const m = Math.floor(s / 60), r = s % 60;
+  return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
+}
+
+/** "Mission Complete" ekranındaki tüm alanları oturum özetiyle doldurur. */
+function renderEndScreen(summary) {
+  endScore.textContent = summary.score;
+  endGrade.textContent = summary.grade;
+  endAccuracy.textContent = summary.accuracy + '%';
+  endTracking.textContent = summary.tracking + '%';
+  endReaction.textContent = summary.avgReactionMs != null ? summary.avgReactionMs + ' ms' : '—';
+  endTime.textContent = fmtDuration(summary.durationMs);
+  endBadge.textContent = `${RANK_MEDALS[summary.grade] || '🎯'} ${summary.rankTitle}`;
+  endBestGesture.textContent = summary.bestGesture
+    ? `✓ ${summary.bestGesture.label} (${summary.bestGesture.rate}%)`
+    : 'Henüz yeterli veri yok';
+  endWeakGesture.textContent = summary.weakGesture
+    ? `• ${summary.weakGesture.label} (${summary.weakGesture.rate}%)`
+    : 'Henüz yeterli veri yok';
+}
+
 export function endGame() {
   state.paused = true;
-  endScore.textContent = state.score;
+  const summary = computeSessionSummary(state.score, true);
+  saveSessionToStorage(summary);
+  lastSummary = summary;
+  renderEndScreen(summary);
   showOverlay(ovEnd);
 }
 
@@ -147,6 +195,8 @@ export function hideOverlays() {
 function popTarget(t, pts) {
   t.popping = 1;
   addScore(pts);
+  const reactionMs = t.born != null ? performance.now() - t.born : null;
+  recordPop(t.type, reactionMs);
 }
 
 function updateClickTargets(cx, cy) {
@@ -186,6 +236,7 @@ function updateDrag(cx, cy) {
       if (dz < task.zoneR) {
         task.done = true;
         state.dragsCompleted += 1;
+        recordPop('drag', performance.now() - task.spawnTime);
         updateProgress();
         checkLevelComplete();
         if (currentLevel() && currentLevel().key === 'drag') {
@@ -200,12 +251,15 @@ function updateDrag(cx, cy) {
   // Sürükleme seviyesinde bonus sol/sağ tık hedefleri seyrek gelir.
   const levelElapsed = performance.now() - state.levelStartTime;
   if (levelElapsed - state.lastSpawn > 2200 && state.targets.length < 2) {
+    const bonusType = Math.random() < 0.5 ? 'left' : 'right';
     state.targets.push({
-      type: Math.random() < 0.5 ? 'left' : 'right',
+      type: bonusType,
       x: rand(80, game.width - 80), y: rand(140, game.height - 260),
       r: 26, popping: 0,
+      born: performance.now(),
     });
     state.lastSpawn = levelElapsed;
+    recordSpawn(bonusType);
   }
 
   state.targets.forEach(t => {
@@ -302,8 +356,15 @@ function drawLockOverlay() {
 
 /* ------------------------------- Ana döngü ------------------------------ */
 
+let lastFrameTs = performance.now();
+
 export function loop() {
   requestAnimationFrame(loop);
+
+  const now = performance.now();
+  const dt = now - lastFrameTs;
+  lastFrameTs = now;
+  recordFrame(dt, state.handVisible, state.paused);
 
   // İmleç yumuşatma (lerp).
   state.cursor.x += (state.targetCursor.x - state.cursor.x) * settings.smoothFactor;

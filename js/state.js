@@ -2,6 +2,10 @@
  * state.js
  * Tek gerçek kaynak (single source of truth): oyunun çalışma zamanı durumu
  * ve kullanıcı ayarları. Diğer modüller bu nesneleri import edip okur/günceller.
+ *
+ * Not: Performans/rapor telemetrisi (skor doğruluğu, tepki süresi, el takibi
+ * kalitesi vb.) kasıtlı olarak burada değil, ayrı `stats.js` modülünde tutulur;
+ * böylece "oyunun anlık durumu" ile "oturum analitiği" birbirinden ayrışır.
  */
 
 import { SENS_THRESH, SMOOTH_VALS, DEFAULT_SETTING_INDEX } from './config.js';

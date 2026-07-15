@@ -1,7 +1,7 @@
 /**
  * ui.js
- * Kullanıcı etkileşimlerini (butonlar, slider'lar, kamera seçimi) diğer
- * modüllerdeki fonksiyonlara bağlar. DOM olaylarının tek toplandığı yer.
+ * Kullanıcı etkileşimlerini (butonlar, slider'lar, kamera seçimi, PDF indirme)
+ * diğer modüllerdeki fonksiyonlara bağlar. DOM olaylarının tek toplandığı yer.
  */
 
 import { SENS_LABELS, SMOOTH_LABELS } from './config.js';
@@ -9,10 +9,14 @@ import { setSensitivity, setSmoothness } from './state.js';
 import {
   gearBtn, settingsPanel, sensSlider, sensVal, smoothSlider, smoothVal,
   permBtn, camPicker, camSelect, startBtn, errMsg,
-  lvContinueBtn, restartBtn, ovError,
+  lvContinueBtn, restartBtn, pdfBtn, ovError,
 } from './dom.js';
 import { listCameras, pickDefaultCamera, startStream } from './gestures.js';
-import { resetGame, startLevel, loop, showOverlay, hideOverlays, resizeCanvases } from './game.js';
+import {
+  resetGame, startLevel, loop, showOverlay, hideOverlays, resizeCanvases, getLastSummary,
+} from './game.js';
+import { downloadSessionPDF } from './pdf.js';
+import { computeSessionSummary, saveSessionToStorage } from './stats.js';
 import { state } from './state.js';
 
 function wireSettingsPanel() {
@@ -77,6 +81,27 @@ function wireLevelAndRestart() {
   });
 }
 
+function wirePdfButton() {
+  pdfBtn.addEventListener('click', () => {
+    const summary = getLastSummary();
+    if (summary) downloadSessionPDF(summary);
+  });
+}
+
+/**
+ * Oyuncu sekmeyi kapatır/yeniler ve oyunu tamamlamadan ayrılırsa, o ana kadarki
+ * oturumu da "yarım kaldı" olarak rapora kaydeder — böylece analiz sayfası hiç
+ * boş kalmaz.
+ */
+function wirePartialSessionSave() {
+  window.addEventListener('beforeunload', () => {
+    if (!state.paused) {
+      const summary = computeSessionSummary(state.score, false);
+      saveSessionToStorage(summary);
+    }
+  });
+}
+
 /** Uygulamanın tüm olay dinleyicilerini kurar. `main.js` tarafından çağrılır. */
 export function initUI() {
   window.addEventListener('resize', resizeCanvases);
@@ -85,4 +110,6 @@ export function initUI() {
   wireSettingsPanel();
   wireStartFlow();
   wireLevelAndRestart();
+  wirePdfButton();
+  wirePartialSessionSave();
 }

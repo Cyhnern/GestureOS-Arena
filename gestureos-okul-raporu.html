@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestureOS Arena — Proje ve Performans Raporu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<nav class="report-nav">
+  <a class="brand" href="index.html">
+    <span class="mark"></span> GestureOS Arena
+  </a>
+  <a class="play-link" href="index.html">Oyuna Dön →</a>
+</nav>
+
+<div class="report-shell">
+
+  <!-- HERO / PROJE TANITIMI -->
+  <header class="r-hero">
+    <div class="r-eyebrow">Proje &amp; Analiz Raporu</div>
+    <h1>GestureOS Arena: El Hareketiyle Bilgisayar Kontrolü Eğitim Aracı</h1>
+    <p class="lead">
+      GestureOS Arena, standart bir web kamerası ve tarayıcı içi el takip teknolojisi kullanarak
+      kullanıcılara imleç kontrolü, sol/sağ tıklama ve sürükle-bırak gibi temel bilgisayar
+      etkileşimlerini <b>fiziksel el hareketleriyle</b> öğreten, oyunlaştırılmış bir web uygulamasıdır.
+      Bu sayfa hem projenin eğitsel/teknik arka planını hem de bu tarayıcıda oynanan oturumlara
+      ait gerçek performans verilerini (doğruluk, el takibi kalitesi, tepki süresi) özetler.
+    </p>
+  </header>
+
+  <!-- 1. HEDEF KİTLE VE AMAÇ -->
+  <section class="r-section">
+    <div class="r-section-head">
+      <span class="r-section-num">01</span>
+      <h2>Amaç ve Hedef Kitle</h2>
+    </div>
+    <div class="r-grid">
+      <div class="r-card">
+        <h3>🎯 Eğitsel Amaç</h3>
+        <p>
+          Fare/trackpad kullanmakta zorlanan öğrenciler, motor beceri gelişimi desteklenen
+          çocuklar veya temel dijital okuryazarlık eğitimi alan yetişkinler için "imleç mantığını"
+          soyut bir cihaz yerine doğrudan el hareketiyle deneyimleterek öğretmeyi hedefler.
+        </p>
+      </div>
+      <div class="r-card">
+        <h3>🏫 Kullanım Alanları</h3>
+        <p>
+          Okullarda bilişim/teknoloji derslerinde giriş etkinliği, özel eğitim ve ergoterapi
+          seanslarında ince motor becerisi çalışması, veya genel olarak erişilebilir/temassız
+          arayüz kavramlarını tanıtan bir atölye materyali olarak kullanılabilir.
+        </p>
+      </div>
+      <div class="r-card">
+        <h3>🧩 Kademeli Öğrenme</h3>
+        <p>
+          Zorluk 4 ayrı seviyede kademeli olarak artar: önce sade hareket takibi, ardından
+          tek jestli tıklama, çoklu jest ayrımı ve son olarak çok adımlı sürükle-bırak
+          koordinasyonu. Her seviye bir öncekinin üzerine inşa edilir.
+        </p>
+      </div>
+      <div class="r-card">
+        <h3>🔒 Gizlilik İlkesi</h3>
+        <p>
+          Kamera görüntüsü hiçbir sunucuya gönderilmez; el takibi tamamen kullanıcının kendi
+          tarayıcısında, MediaPipe Hands modeliyle anlık olarak işlenir. Performans verileri de
+          yalnızca bu cihazın tarayıcısında (localStorage) saklanır.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. SEVİYE ANALİZİ -->
+  <section class="r-section">
+    <div class="r-section-head">
+      <span class="r-section-num">02</span>
+      <h2>Seviye Bazlı Kazanım Analizi</h2>
+    </div>
+    <table class="r-table">
+      <thead>
+        <tr><th>Seviye</th><th>Jest</th><th>Kazandırdığı Beceri</th><th class="num">Hedef</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="lvl-icon">✋</span> 1 — İmleç Kontrolü</td>
+          <td>Açık el, uzamsal takip</td>
+          <td>Göz-el koordinasyonu, hareket-imleç ilişkisini içselleştirme</td>
+          <td class="num">10 hedef</td>
+        </tr>
+        <tr>
+          <td><span class="lvl-icon">🤏</span> 2 — Sol Tık</td>
+          <td>Başparmak + işaret parmağı pinch</td>
+          <td>İnce motor hassasiyeti, zamanlı tetikleme kontrolü</td>
+          <td class="num">12 hedef</td>
+        </tr>
+        <tr>
+          <td><span class="lvl-icon">🖐️</span> 3 — Sol + Sağ Tık</td>
+          <td>Başparmak + orta parmak pinch</td>
+          <td>Jest ayrımı, bilişsel görev değiştirme (task-switching)</td>
+          <td class="num">15 hedef</td>
+        </tr>
+        <tr>
+          <td><span class="lvl-icon">✊</span> 4 — Sürükleme</td>
+          <td>Yumruk (tut) / açık el (bırak)</td>
+          <td>Çok adımlı planlama, sürekli hareket sırasında jest korunumu</td>
+          <td class="num">5 görev</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 3. TEKNİK YÖNTEM VE METRİKLER -->
+  <section class="r-section">
+    <div class="r-section-head">
+      <span class="r-section-num">03</span>
+      <h2>Teknik Yöntem ve Ölçüm Metodolojisi</h2>
+    </div>
+    <div class="r-grid">
+      <div class="r-card">
+        <h3>🖐️ El Takibi</h3>
+        <p>Google MediaPipe Hands modeli, 21 el eklem noktasını (landmark) gerçek zamanlı tespit eder; jestler bu noktalar arası mesafe oranlarından hesaplanır.</p>
+      </div>
+      <div class="r-card">
+        <h3>🎯 Accuracy (Doğruluk)</h3>
+        <p>Ekrana çıkan hedef/görev sayısına oranla başarıyla tamamlanan hedef/görev yüzdesidir; jest türü bazında ayrı ayrı da hesaplanır.</p>
+      </div>
+      <div class="r-card">
+        <h3>📡 Tracking (El Takibi)</h3>
+        <p>Aktif oynanış süresinin ne kadarında elin kamera tarafından kesintisiz görüldüğünü ölçer; düşük değer sık el kaybı/aydınlatma sorununa işaret eder.</p>
+      </div>
+      <div class="r-card">
+        <h3>⚡ Reaction (Tepki Süresi)</h3>
+        <p>Bir hedefin ekrana çıkışı ile doğru jestle tamamlanışı arasındaki ortalama süredir (ms); "Speed" radar ekseni bu değerden türetilir.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PERFORMANS RAPORU (DASHBOARD) -->
+  <section class="r-section">
+    <div class="r-section-head">
+      <span class="r-section-num">04</span>
+      <h2>Performans Raporu — Son Oturum</h2>
+    </div>
+    <div id="performanceContent">
+      <!-- js/report.js tarafından doldurulur -->
+    </div>
+  </section>
+
+  <!-- 5. GEÇMİŞ OTURUMLAR -->
+  <section class="r-section">
+    <div class="r-section-head">
+      <span class="r-section-num">05</span>
+      <h2>Geçmiş Oturumlar</h2>
+    </div>
+    <div id="historyContent"></div>
+    <div id="resetBtnWrap" style="display:none;">
+      <button class="reset-report" onclick="clearReportData()">Tüm rapor verilerini sıfırla</button>
+    </div>
+  </section>
+
+  <footer class="r-footer">
+    GestureOS Arena — bu rapor, cihazınızda saklanan gerçek oyun oturumu verilerinden otomatik olarak oluşturulmuştur.
+  </footer>
+
+</div>
+
+<!-- jsPDF (global window.jspdf.jsPDF) — js/pdf.js bunu kullanır -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script type="module" src="js/report.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+/* Rapor sayfası kendi bağımsız temasını taşır (oyun sayfasının css'ine
+   bağımlı değildir) — böylece iki sayfa birbirinden koparılabilir. */
+
+:root{
+  --paper:#F4F6F2; --paper-dim:#EAEDE6; --ink:#10201D; --ink-soft:#4B5C57;
+  --cyan:#1FB6C9; --cyan-deep:#12848F; --lime:#B4E23C; --gold:#F5B942;
+  --line:#C9D2CC; --coral:#FF5A45;
+  --disp:'Space Grotesk',sans-serif; --body:'IBM Plex Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--body);
+  min-height:100vh;
+}
+
+.report-nav{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px; background:var(--ink); color:var(--paper);
+  border-bottom:3px solid var(--cyan);
+}
+.report-nav .brand{
+  font-family:var(--disp); font-weight:600; font-size:16px; color:var(--paper);
+  text-decoration:none; display:flex; align-items:center; gap:8px;
+}
+.report-nav .brand .mark{width:9px;height:9px;background:var(--cyan); transform:rotate(45deg); border-radius:2px;}
+.report-nav a.play-link{
+  font-family:var(--mono); font-size:12.5px; color:var(--ink); background:var(--cyan);
+  padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600;
+}
+
+.report-shell{max-width:980px; margin:0 auto; padding:40px 24px 90px;}
+
+/* Hero */
+.r-hero{margin-bottom:56px;}
+.r-eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; color:var(--cyan-deep); text-transform:uppercase; margin-bottom:12px;}
+.r-hero h1{font-family:var(--disp); font-size:clamp(28px,4.4vw,42px); font-weight:700; letter-spacing:-.015em; line-height:1.15; margin-bottom:16px;}
+.r-hero p.lead{font-size:16.5px; line-height:1.7; color:var(--ink-soft); max-width:680px;}
+
+/* Section headers */
+.r-section{margin-bottom:52px;}
+.r-section-head{display:flex; align-items:baseline; gap:12px; margin-bottom:20px; border-bottom:2px solid var(--line); padding-bottom:12px;}
+.r-section-num{font-family:var(--mono); font-size:13px; color:var(--cyan-deep); font-weight:600;}
+.r-section-head h2{font-family:var(--disp); font-size:22px; font-weight:600; letter-spacing:-.01em;}
+
+/* Cards / grids */
+.r-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+@media (max-width:700px){ .r-grid{grid-template-columns:1fr;} }
+.r-card{
+  background:#fff; border:1px solid var(--line); border-radius:14px; padding:22px 24px;
+  box-shadow:0 1px 2px rgba(16,32,29,.04);
+}
+.r-card h3{font-family:var(--disp); font-size:16px; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:8px;}
+.r-card p{font-size:14px; line-height:1.6; color:var(--ink-soft);}
+.r-card .lvl-icon{font-size:20px;}
+
+/* Dashboard grid: stat table + radar chart side by side */
+.dash-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:20px;}
+@media (max-width:700px){ .dash-grid{grid-template-columns:1fr;} }
+.stat-table th{width:60%; font-family:var(--body); font-weight:600; font-size:13.5px; text-align:left; background:none; text-transform:none; letter-spacing:0;}
+.stat-table td{font-family:var(--disp); font-weight:700; font-size:15px;}
+
+.session-meta{font-family:var(--mono); font-size:12px; color:var(--ink-soft); margin-bottom:16px;}
+
+/* Table */
+.r-table{width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+.r-table th, .r-table td{padding:12px 16px; text-align:left; font-size:13.5px; border-bottom:1px solid var(--line);}
+.r-table th{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); background:var(--paper-dim);}
+.r-table tr:last-child td{border-bottom:none;}
+.r-table td.num{font-family:var(--mono); text-align:right;}
+.badge{display:inline-block; font-family:var(--mono); font-size:11px; padding:2px 9px; border-radius:100px; font-weight:600;}
+.badge.ok{background:rgba(180,226,60,.25); color:#5b7a12;}
+.badge.mid{background:rgba(245,185,66,.25); color:#8a5c05;}
+.badge.low{background:rgba(255,90,69,.18); color:#b3341f;}
+
+/* Chart */
+.chart-wrap{background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; align-items:center; justify-content:center;}
+.radar-wrap canvas{width:100%; max-width:320px;}
+
+/* Insights row (best / weakest gesture) */
+.insight-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:8px;}
+.insight-card{flex:1; min-width:240px; border-radius:12px; padding:16px 18px; border:1px solid var(--line);}
+.insight-card.good{background:rgba(180,226,60,.12); border-color:rgba(180,226,60,.4);}
+.insight-card.bad{background:rgba(255,90,69,.1); border-color:rgba(255,90,69,.35);}
+.insight-label{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:6px;}
+.insight-value{font-family:var(--disp); font-size:16px; font-weight:700;}
+
+/* Empty state */
+.empty-state{
+  background:#fff; border:1.5px dashed var(--line); border-radius:14px; padding:44px 28px;
+  text-align:center;
+}
+.empty-state .emoji{font-size:38px; margin-bottom:12px;}
+.empty-state h3{font-family:var(--disp); font-size:18px; margin-bottom:8px;}
+.empty-state p{color:var(--ink-soft); font-size:14px; margin-bottom:20px;}
+.empty-state a.btn{
+  display:inline-block; background:var(--cyan); color:var(--ink); text-decoration:none;
+  font-weight:600; font-size:14px; padding:11px 22px; border-radius:8px;
+}
+
+.btn{
+  font-weight:600; font-size:14px; padding:11px 22px; border-radius:8px; border:none;
+  background:var(--cyan); color:var(--ink); cursor:pointer;
+}
+.btn:hover{opacity:.92;}
+
+/* history list */
+.session-list{display:flex; flex-direction:column; gap:10px;}
+.session-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px 16px; font-size:13.5px;
+}
+.session-row .s-date{font-family:var(--mono); color:var(--ink-soft); font-size:12px;}
+.session-row .s-score{font-family:var(--disp); font-weight:700; color:var(--cyan-deep);}
+.session-row .s-status{font-family:var(--mono); font-size:11px;}
+
+.r-footer{
+  text-align:center; padding:30px 0 0; color:var(--ink-soft); font-size:12.5px; font-family:var(--mono);
+  border-top:1px solid var(--line); margin-top:20px;
+}
+
+.reset-report{
+  background:none; border:1px solid var(--line); color:var(--ink-soft); font-family:var(--mono);
+  font-size:11.5px; padding:6px 12px; border-radius:8px; margin-top:10px; cursor:pointer;
+}

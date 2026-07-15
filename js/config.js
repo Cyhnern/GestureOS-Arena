@@ -1,7 +1,8 @@
 /**
  * config.js
- * Oyunun sabit ayarları: seviye tanımları, hassasiyet ve yumuşatma tabloları.
- * Başka hiçbir modüle bağımlı değildir.
+ * Oyunun sabit ayarları: seviye tanımları, hassasiyet/yumuşatma tabloları
+ * ve performans raporu için rütbe/etiket sabitleri. Başka hiçbir modüle
+ * bağımlı değildir.
  */
 
 export const LEVELS = [
@@ -44,3 +45,41 @@ export const LOCK_HOLD_MS = 700;
 
 /** Varsayılan ayar paneli index'i (0=ilk seçenek, 1=orta, 2=son). */
 export const DEFAULT_SETTING_INDEX = 1;
+
+/* ==================== RAPOR / PERFORMANS SABİTLERİ ==================== */
+
+/** localStorage anahtarı — oturum geçmişi burada tutulur (rapor sayfası da okur). */
+export const REPORT_KEY = 'gestureosArenaSessions';
+
+/** Jest türü -> okunabilir etiket (rapor tablolarında ve PDF'te kullanılır). */
+export const GESTURE_LABELS = {
+  hover: 'İmleç Kontrolü',
+  left: 'Sol Tık',
+  right: 'Sağ Tık',
+  drag: 'Sürükleme',
+};
+
+/**
+ * Genel performans skoruna (0-100) göre harf notu eşikleri.
+ * En yüksekten en düşüğe sıralı olmalı; computeGrade ilk eşleşeni döner.
+ */
+export const GRADE_THRESHOLDS = [
+  { min: 90, label: 'S' },
+  { min: 78, label: 'A' },
+  { min: 62, label: 'B' },
+  { min: 45, label: 'C' },
+  { min: 0, label: 'D' },
+];
+
+/** Harf notuna karşılık gelen rütbe unvanı ve madalya emojisi. */
+export const RANK_TITLES = {
+  S: 'Elite Player',
+  A: 'Uzman Oyuncu',
+  B: 'Yetenekli Oyuncu',
+  C: 'Gelişen Oyuncu',
+  D: 'Acemi Oyuncu',
+};
+
+export const RANK_MEDALS = {
+  S: '🥇', A: '🥈', B: '🥉', C: '🎖️', D: '🎯',
+};
